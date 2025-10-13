@@ -1,0 +1,42 @@
+# === Connect to ROS 2 socket server ===
+socket_open("192.168.8.173", 5000)  # 
+
+# === Wait for 'start' message ===
+def wait_for_start():
+  local received_msg = ""
+  while True:
+    received_msg = socket_read_string()
+    if received_msg == "start\n":
+      break
+  end
+end
+
+wait_for_start()
+socket_close()
+
+# === Move to target pose ===
+target_pose = p[0.68, 0.91, 0.45, -2.09, -1.52, 2.46]
+movej(target_pose, a=1.2, v=0.25)
+
+RG6(110)
+socket_open("192.168.8.173", 5000)
+socket_send_string("Gripper_opened_at_target_1")
+socket_close()
+sleep(2.0)
+
+target_pose2 = p[0.68, 0.72, 1.51, -2.36, -1.52, 2.46]
+movej(target_pose2, a=1.2, v=0.25)
+
+RG6(0)
+socket_open("192.168.8.173", 5000)
+socket_send_string("Gripper_closed_at_target_2")
+socket_close()
+
+target_pose3 = p[1.87, 0.56, 0.72, 1.28, 1.62, 0.0]
+movej(target_pose3, a=1.2, v=0.25)
+
+RG6(110)
+socket_open("192.168.8.173", 5000)
+socket_send_string("Gripper_opened_at_target_3")
+socket_close()
+
